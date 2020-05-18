@@ -20,7 +20,7 @@ var _ = fs.Node(&file{})
 var _ = fs.NodeOpener(&file{})
 
 type file struct {
-	udf *C.udfread
+	udf  *C.udfread
 	path string
 	size uint64
 }
@@ -28,7 +28,7 @@ type file struct {
 func (f *file) Attr(ctx context.Context, attr *fuse.Attr) error {
 	attr.Size = f.size
 	attr.Mode = 0644
-	attr.Valid = 24*7*365*time.Hour
+	attr.Valid = 24 * 7 * 365 * time.Hour
 
 	return nil
 }
@@ -47,7 +47,7 @@ var _ = fs.HandleReleaser(&fileHandle{})
 var _ = fs.HandleReader(&fileHandle{})
 
 type fileHandle struct {
-	fh *C.UDFFILE
+	fh     *C.UDFFILE
 	offset int64
 }
 

@@ -17,6 +17,7 @@ import (
 type FS struct {
 	udf *C.udfread
 }
+
 var _ fs.FS = (*FS)(nil)
 
 func NewFS(iso string) (*FS, error) {
@@ -41,8 +42,8 @@ func (f *FS) Root() (fs.Node, error) {
 	}
 
 	d := &dir{
-		udf: f.udf,
-		path: "/",
+		udf:   f.udf,
+		path:  "/",
 		cache: cache,
 	}
 

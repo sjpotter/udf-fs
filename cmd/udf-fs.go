@@ -16,7 +16,7 @@ import (
 
 var (
 	progName = filepath.Base(os.Args[0])
-	debug = flag.Bool("debug", false, "verbose fuse debugging")
+	debug    = flag.Bool("debug", false, "verbose fuse debugging")
 )
 
 func usage() {

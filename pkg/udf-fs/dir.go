@@ -24,20 +24,20 @@ var _ = fs.NodeRequestLookuper(&dir{})
 var _ = fs.HandleReadDirAller(&dir{})
 
 type direntInfo struct {
-	size uint64
+	size   uint64
 	dtType fuse.DirentType
 }
 
 type dir struct {
-	udf *C.udfread
-	path string
+	udf   *C.udfread
+	path  string
 	cache map[string]direntInfo
 }
 
 func (d *dir) Attr(ctx context.Context, attr *fuse.Attr) error {
 	attr.Size = 0
 	attr.Mode = os.ModeDir | 0755
-	attr.Valid = 24*7*365*time.Hour
+	attr.Valid = 24 * 7 * 365 * time.Hour
 
 	return nil
 }
