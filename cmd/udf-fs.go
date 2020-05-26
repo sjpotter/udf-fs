@@ -11,6 +11,8 @@ import (
 	"bazil.org/fuse/fs"
 	"bazil.org/fuse/fs/fstestutil"
 
+	"github.com/sevlyar/go-daemon"
+
 	udf_fs "github.com/sjpotter/udf-fs/pkg/udf-fs"
 )
 
@@ -37,12 +39,22 @@ func main() {
 		os.Exit(2)
 	}
 
-	if *debug {
-		fstestutil.DebugByDefault()
-	}
-
 	file := flag.Arg(0)
 	mountpoint := flag.Arg(1)
+
+	if !*debug {
+		cntxt := &daemon.Context{}
+		d, err := cntxt.Reborn()
+		if err != nil {
+			log.Fatal("Unable to run: ", err)
+		}
+		if d != nil {
+			return
+		}
+		defer cntxt.Release()
+	} else {
+		fstestutil.DebugByDefault()
+	}
 
 	if err := mount(file, mountpoint); err != nil {
 		log.Fatal(err)
@@ -50,17 +62,18 @@ func main() {
 }
 
 func mount(file, mountpoint string) error {
-	c, err := fuse.Mount(mountpoint, fuse.AllowOther())
-	if err != nil {
-		return err
-	}
-	defer c.Close()
-
 	filesys, err := udf_fs.NewFS(file)
 	if err != nil {
 		return err
 	}
 	defer filesys.Release()
+
+	c, err := fuse.Mount(mountpoint, fuse.AllowOther())
+	if err != nil {
+		return err
+	}
+
+	defer c.Close()
 
 	return fs.Serve(c, filesys)
 }
